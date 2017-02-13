@@ -23,13 +23,15 @@ Alternatively you can clone or download the library files.
 ## Usage
 
 ```php
+use Elvanto\LitEmoji;
+
 echo LitEmoji::encodeShortCode('Baby you light my 🔥! 😃');
 // 'Baby you light my :fire:! :smiley:'
 
 echo LitEmoji::encodeHtml('Baby you light my :fire:! :smiley:');
 // 'Baby you light my &#x1F525;! &#x1F603;'
 
-echo LitEmoji::encodeHtml('Baby you light my :fire:! :smiley:');
+echo LitEmoji::encodeUnicode('Baby you light my :fire:! :smiley:');
 // 'Baby you light my 🔥! 😃'
 ```
 
