@@ -33,7 +33,7 @@ class LitEmoji
                 foreach ($codepoints as $index => $codepoint) {
 
                     /* Skip if number of codepoints exceeds remaining input */
-                    if (($offset + $index) >= count($words)) {
+                    if (($offset + $index) > count($words)) {
                         continue 2;
                     }
 
