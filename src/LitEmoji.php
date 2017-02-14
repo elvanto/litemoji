@@ -31,6 +31,12 @@ class LitEmoji
 
                 /* Match a sequence of codepoints */
                 foreach ($codepoints as $index => $codepoint) {
+
+                    /* Skip if number of codepoints exceeds remaining input */
+                    if (($offset + $index) >= count($words)) {
+                        continue 2;
+                    }
+
                     $word = strtoupper(dechex($words[$offset + $index]));
 
                     if ($word != $codepoint) {
