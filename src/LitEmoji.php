@@ -12,52 +12,53 @@ class LitEmoji
      */
     public static function encodeShortcode($content)
     {
+        $mb_regex = '/(
+    		     \x23\xE2\x83\xA3               # Digits
+    		     [\x30-\x39]\xE2\x83\xA3
+    		   | \xF0\x9F[\x85-\x88][\xA6-\xBF] # Enclosed characters
+    		   | \xF0\x9F[\x8C-\x97][\x80-\xBF] # Misc
+    		   | \xF0\x9F\x98[\x80-\xBF]        # Smilies
+    		   | \xF0\x9F\x99[\x80-\x8F]
+    		   | \xF0\x9F\x9A[\x80-\xBF]        # Transport and map symbols
+    		)/x';
+
         $replacement = '';
         $encoding = mb_detect_encoding($content);
+        $codepoints = array_flip(self::$shortcodes);
 
-        /* Convert the string to fixed width characters */
-        $fixed = mb_convert_encoding($content, 'UTF-32', $encoding);
-        $words = unpack('N*', $fixed);
+        /* Break content along codepoint boundaries */
+        $parts = preg_split(
+            $mb_regex,
+            $content,
+            -1,
+            PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY
+        );
 
-        $shortcodes = self::sortShortcodes();
-        $offset = 0;
+        /* Reconstruct content using shortcodes */
+        $sequence = [];
+        foreach ($parts as $offset => $part) {
+            if (preg_match($mb_regex, $part)) {
+                $part = mb_convert_encoding($part, 'UTF-32', $encoding);
+                $words = unpack('N*', $part);
+                $codepoint = sprintf('%X', reset($words));
 
-        while ($offset < count($words)) {
-            $offset ++;
-            $replace = '';
+                $sequence[] = $codepoint;
 
-            foreach ($shortcodes as $shortcode => $codepoints) {
-                $codepoints = explode('-', $codepoints);
+                if (isset($codepoints[$codepoint])) {
+                    $replacement .= ":$codepoints[$codepoint]:";
+                    $sequence = [];
+                } else {
+                    /* Check multi-codepoint sequence */
+                    $multi = implode('-', $sequence);
 
-                /* Match a sequence of codepoints */
-                foreach ($codepoints as $index => $codepoint) {
-
-                    /* Skip if number of codepoints exceeds remaining input */
-                    if (($offset + $index) > count($words)) {
-                        continue 2;
-                    }
-
-                    $word = strtoupper(dechex($words[$offset + $index]));
-
-                    if ($word != $codepoint) {
-                        continue 2;
+                    if (isset($codepoints[$multi])) {
+                        $replacement .= ":$codepoints[$multi]:";
+                        $sequence = [];
                     }
                 }
-
-                $replace = ':' . $shortcode . ':';
-                $offset += $index;
+            } else {
+                $replacement .= $part;
             }
-
-            /* Use original character */
-            if (empty($replace)) {
-                $replace = mb_convert_encoding(
-                    pack('N', $words[$offset]),
-                    $encoding,
-                    'UTF-32'
-                );
-            }
-
-            $replacement .= $replace;
         }
 
         return $replacement;
@@ -113,30 +114,6 @@ class LitEmoji
 
             return $replacement;
         }, $content);
-    }
-
-    /**
-     * Returns shortcodes ordered by number of codepoints such that the most
-     * complex shortcodes appear first.
-     *
-     * @return array
-     */
-    private static function sortShortcodes()
-    {
-        $shortcodes = self::$shortcodes;
-
-        uasort($shortcodes, function($a, $b) {
-            $a = count(explode('-', $a));
-            $b = count(explode('-', $b));
-
-            if ($a == $b) {
-                return 0;
-            }
-
-            return $a > $b ? -1 : 1;
-        });
-
-        return $shortcodes;
     }
 
     /**

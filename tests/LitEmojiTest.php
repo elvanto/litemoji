@@ -21,4 +21,10 @@ class LitEmojiTest extends \PHPUnit_Framework_TestCase
         $text = LitEmoji::encodeUnicode('My mixtape is :fire:. Made in :flag-au:!');
         $this->assertEquals('My mixtape is 🔥. Made in 🇦🇺!', $text);
     }
+
+    public function testUnicodeToShortcodeTiming()
+    {
+        $text = LitEmoji::encodeShortcode(file_get_contents(__DIR__ . '/UnicodeIpsum'));
+        $this->assertEquals(file_get_contents(__DIR__ . '/ShortcodeIpsum'), $text);
+    }
 }
