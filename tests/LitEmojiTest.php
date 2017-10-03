@@ -10,6 +10,12 @@ class LitEmojiTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('My mixtape is :fire:. Made in :flag-au:!', $text);
     }
 
+    public function testHtmlToShortcode()
+    {
+        $text = LitEmoji::encodeShortcode('My mixtape is &#x1F525;. Made in &#x1F1E6;&#x1F1FA;!');
+        $this->assertEquals('My mixtape is :fire:. Made in :flag-au:!', $text);
+    }
+
     public function testShortcodeToHtml()
     {
         $text = LitEmoji::encodeHtml('My mixtape is :fire:. Made in :flag-au:!');

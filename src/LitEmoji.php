@@ -61,6 +61,24 @@ class LitEmoji
             }
         }
 
+        /* Detect HTML entities */
+        $replacements = array();
+        foreach ($codepoints as $codepoint => $shortcode) {
+            $parts = explode('-', $codepoint);
+            $hex = '';
+            $dec = '';
+
+            foreach ($parts as $part) {
+                $hex .= '&#x' . $part . ';';
+                $dec .= '&#' . hexdec($part) . ';';
+            }
+
+            $replacements[$hex] = ':' . $shortcode . ':';
+            $replacements[$dec] = ':' . $shortcode . ':';
+        }
+
+        $replacement = str_replace(array_keys($replacements), $replacements, $replacement);
+
         return $replacement;
     }
 

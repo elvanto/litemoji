@@ -35,10 +35,6 @@ echo LitEmoji::encodeUnicode('Baby you light my :fire:! :smiley:');
 // 'Baby you light my 🔥! 😃'
 ```
 
-## TODO
-
-- Add method for converting HTML entities to shortcodes.
-
 ## Contributing
 
 Pull requests are welcome. New code must be fully unit tested (the existing
