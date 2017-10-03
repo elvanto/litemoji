@@ -5,7 +5,7 @@ namespace LitEmoji;
 class LitEmoji
 {
     /**
-     * Converts all unicode emoji to plaintext shortcodes.
+     * Converts all unicode emoji and HTML entities to plaintext shortcodes.
      *
      * @param string $content
      * @return string
@@ -83,14 +83,14 @@ class LitEmoji
     }
 
     /**
-     * Converts all plaintext shortcodes to HTML entities.
+     * Converts all plaintext shortcodes and unicode emoji to HTML entities.
      *
      * @param string $content
      * @return string
      */
     public static function encodeHtml($content)
     {
-        return preg_replace_callback('/:([\w\-\+]+):/', function($matches) {
+        $content = preg_replace_callback('/:([\w\-\+]+):/', function($matches) {
             if (!isset(self::$shortcodes[$matches[1]])) {
                 return $matches[0];
             }
@@ -105,17 +105,42 @@ class LitEmoji
 
             return $entity;
         }, $content);
+
+        /* Detect unicode */
+        $mb_regex = '/(
+    		     \x23\xE2\x83\xA3               # Digits
+    		     [\x30-\x39]\xE2\x83\xA3
+    		   | \xF0\x9F[\x85-\x88][\xA6-\xBF] # Enclosed characters
+    		   | \xF0\x9F[\x8C-\x97][\x80-\xBF] # Misc
+    		   | \xF0\x9F\x98[\x80-\xBF]        # Smilies
+    		   | \xF0\x9F\x99[\x80-\x8F]
+    		   | \xF0\x9F\x9A[\x80-\xBF]        # Transport and map symbols
+    		)/x';
+        $encoding = mb_detect_encoding($content);
+        if (preg_match_all($mb_regex, $content, $matches)) {
+            if (!empty($matches[1])) {
+                foreach ($matches[1] as $part) {
+                    $words = unpack('H*', mb_convert_encoding($part, 'UTF-32', $encoding));
+                    if (isset($words[1])) {
+                        $entity = '&#x' . ltrim($words[1], '0') . ';';
+                        $content = str_replace($part, $entity, $content);
+                    }
+                }
+            }
+        }
+
+        return $content;
     }
 
     /**
-     * Converts all plaintext shortcodes to unicode codepoints.
+     * Converts all plaintext shortcodes and HTML entities to unicode codepoints.
      *
      * @param string $content
      * @return string
      */
     public static function encodeUnicode($content)
     {
-        return preg_replace_callback('/:([\w\-\+]+):/', function($matches) {
+        $content = preg_replace_callback('/:([\w\-\+]+):/', function($matches) {
             if (!isset(self::$shortcodes[$matches[1]])) {
                 return $matches[0];
             }
@@ -132,6 +157,10 @@ class LitEmoji
 
             return $replacement;
         }, $content);
+
+        $content = html_entity_decode($content);
+
+        return $content;
     }
 
     /**
