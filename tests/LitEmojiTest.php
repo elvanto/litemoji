@@ -25,7 +25,7 @@ class LitEmojiTest extends \PHPUnit_Framework_TestCase
     public function testUnicodeToHtml()
     {
         $text = LitEmoji::encodeHtml('My mixtape is 🔥. Made in 🇦🇺!');
-        $this->assertEquals('My mixtape is &#x1f525;. Made in &#x1f1e6;&#x1f1fa;!', $text);
+        $this->assertEquals('My mixtape is &#x1F525;. Made in &#x1F1E6;&#x1F1FA;!', $text);
     }
 
     public function testShortcodeToUnicode()
