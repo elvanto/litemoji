@@ -9,16 +9,16 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^5.0",
-        "iamcal/emoji-data": "^3.0"
+        "milesj/emojibase": "*"
     },
     "repositories": [
         {
             "type": "package",
             "package": {
-                "name": "iamcal/emoji-data",
+                "name": "milesj/emojibase",
                 "version": "3.0.0",
                 "source": {
-                    "url": "https://github.com/iamcal/emoji-data",
+                    "url": "https://github.com/milesj/emojibase",
                     "type": "git",
                     "reference": "master"
                 }
@@ -30,7 +30,7 @@
     },
     "scripts": {
         "update-resources": [
-            "@php bin/shortcodes-array.php"
+            "@php bin/generate-shortcodes-array.php"
         ]
     }
 }

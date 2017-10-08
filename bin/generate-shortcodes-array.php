@@ -1,16 +1,24 @@
 <?php
 
-$data = json_decode(file_get_contents('../vendor/iamcal/emoji-data/emoji.json'), true);
+function normalizeShortcode($shortcode) {
+    return str_replace('-', '_', strtolower($shortcode));
+}
 
-$emoji_array = array();
+$data = json_decode(file_get_contents(__DIR__ . '/../vendor/milesj/emojibase/packages/emojibase-data/en/compact.json'), true);
+$emoji_array = require(__DIR__ . '/../src/shortcodes-array.php');
+$existing_shortcodes = array_map('normalizeShortcode', array_keys($emoji_array));
+
 foreach ($data as $emoji) {
-    foreach ($emoji['short_names'] as $short_name) {
-        $emoji_array[ (string) $short_name] = $emoji['unified'];
+    foreach ($emoji['shortcodes'] as $shortcode) {
+
+        if (in_array(normalizeShortcode($shortcode), $existing_shortcodes)) {
+            continue;
+        }
+
+        $emoji_array[ (string) $shortcode] = $emoji['hexcode'];
     }
 }
 
 ksort($emoji_array, SORT_NATURAL);
-
 $output = "<?php\nreturn " . var_export($emoji_array, true) . ";";
-
 file_put_contents('src/shortcodes-array.php', $output);
