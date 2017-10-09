@@ -20,5 +20,9 @@ foreach ($data as $emoji) {
 }
 
 ksort($emoji_array, SORT_NATURAL);
-$output = "<?php\nreturn " . var_export($emoji_array, true) . ";";
+$output = "<?php\nreturn [\n";
+foreach ($emoji_array as $shortcode => $codepoints) {
+    $output .= "  '$shortcode' => '$codepoints',\n";
+};
+$output .= '];';
 file_put_contents('src/shortcodes-array.php', $output);
