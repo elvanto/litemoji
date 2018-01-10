@@ -25,7 +25,7 @@ Alternatively you can clone or download the library files.
 ```php
 use LitEmoji\LitEmoji;
 
-echo LitEmoji::encodeShortCode('Baby you light my 🔥! 😃');
+echo LitEmoji::encodeShortcode('Baby you light my 🔥! 😃');
 // 'Baby you light my :fire:! :smiley:'
 
 echo LitEmoji::encodeHtml('Baby you light my :fire:! :smiley:');
