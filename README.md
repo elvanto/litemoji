@@ -35,6 +35,18 @@ echo LitEmoji::encodeUnicode('Baby you light my :fire:! :smiley:');
 // 'Baby you light my 🔥! 😃'
 ```
 
+# Configuration
+
+```php
+use LitEmoji\LitEmoji;
+
+// Exclude specific shortcodes when converting from unicode and HTML entities
+LitEmoji::config('excludeShortcodes', ['mobile', 'android']);
+
+echo LitEmoji::encodeShortcode('📱');
+// ':iphone:'
+```
+
 ## Contributing
 
 Pull requests are welcome. New code must be fully unit tested (the existing

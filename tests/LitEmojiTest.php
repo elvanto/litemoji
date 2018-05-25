@@ -45,4 +45,10 @@ class LitEmojiTest extends \PHPUnit_Framework_TestCase
         $text = LitEmoji::encodeShortcode(file_get_contents(__DIR__ . '/UnicodeIpsum'));
         $this->assertEquals(file_get_contents(__DIR__ . '/ShortcodeIpsum'), $text);
     }
+
+    public function testConfigExcludeShortcodes()
+    {
+        LitEmoji::config('excludeShortcodes', ['mobile', 'android']);
+        $this->assertEquals(':iphone:', LitEmoji::encodeShortcode('📱'));
+    }
 }

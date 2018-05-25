@@ -18,6 +18,7 @@ class LitEmoji
     private static $shortcodeCodepoints = [];
     private static $shortcodeEntities = [];
     private static $entityCodepoints = [];
+    private static $excludedShortcodes = [];
 
     /**
      * Converts all unicode emoji and HTML entities to plaintext shortcodes.
@@ -147,6 +148,8 @@ class LitEmoji
     }
 
     /**
+     * Converts plain text shortcodes to HTML entities.
+     *
      * @param string $content
      * @return string
      */
@@ -155,13 +158,45 @@ class LitEmoji
         return str_replace(array_keys($replacements), $replacements, $content);
     }
 
+    /**
+     * Sets a configuration property.
+     *
+     * @param string $property
+     * @param mixed $value
+     */
+    public static function config($property, $value)
+    {
+        switch ($property) {
+            case 'excludeShortcodes':
+                self::$excludedShortcodes = [];
+
+                if (!is_array($value)) {
+                    $value = [$value];
+                }
+
+                foreach ($value as $code) {
+                    if (is_string($code)) {
+                        self::$excludedShortcodes[] = $code;
+                    }
+                }
+
+                // Invalidate shortcode cache
+                self::$shortcodes = [];
+                break;
+        }
+    }
+
     private static function getShortcodes()
     {
         if (!empty(self::$shortcodes)) {
             return self::$shortcodes;
         }
 
-        self::$shortcodes = require(__DIR__ . '/shortcodes-array.php');
+        // Skip excluded shortcodes
+        self::$shortcodes = array_filter(require(__DIR__ . '/shortcodes-array.php'), function($code) {
+            return !in_array($code, self::$excludedShortcodes);
+        }, ARRAY_FILTER_USE_KEY);
+
         return self::$shortcodes;
     }
 
