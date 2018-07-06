@@ -4,7 +4,7 @@ function normalizeShortcode($shortcode) {
     return str_replace('-', '_', strtolower($shortcode));
 }
 
-$data = json_decode(file_get_contents(__DIR__ . '/../vendor/milesj/emojibase/packages/emojibase-data/en/compact.json'), true);
+$data = json_decode(file_get_contents(__DIR__ . '/../vendor/milesj/emojibase/packages/data/en/compact.json'), true);
 $emoji_array = require(__DIR__ . '/../src/shortcodes-array.php');
 $existing_shortcodes = array_map('normalizeShortcode', array_keys($emoji_array));
 
