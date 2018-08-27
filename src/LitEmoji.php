@@ -194,10 +194,14 @@ class LitEmoji
             return self::$shortcodes;
         }
 
+        $data = require(__DIR__ . '/shortcodes-array.php');
+
         // Skip excluded shortcodes
-        self::$shortcodes = array_filter(require(__DIR__ . '/shortcodes-array.php'), function($code) {
-            return !in_array($code, self::$excludedShortcodes);
-        }, ARRAY_FILTER_USE_KEY);
+        foreach ($data as $code => $codepoint) {
+            if (!in_array($code, self::$excludedShortcodes)) {
+                self::$shortcodes[$code] = $codepoint;
+            }
+        }
 
         return self::$shortcodes;
     }
