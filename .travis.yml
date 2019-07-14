@@ -9,6 +9,8 @@ php:
   - 7.2
   - 7.3
 
+dist: precise
+
 before_script:
   - curl -sSfL -o ~/.phpenv/versions/hhvm/bin/phpunit https://phar.phpunit.de/phpunit-5.7.26.phar
   - composer install --no-interaction --prefer-source
