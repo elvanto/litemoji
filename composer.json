@@ -9,18 +9,18 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^5.0",
-        "milesj/emojibase": "4.0.0"
+        "milesj/emojibase": "5.0.1"
     },
     "repositories": [
         {
             "type": "package",
             "package": {
                 "name": "milesj/emojibase",
-                "version": "4.0.0",
+                "version": "5.0.1",
                 "source": {
                     "url": "https://github.com/milesj/emojibase",
                     "type": "git",
-                    "reference": "tags/emojibase-data@4.0.0"
+                    "reference": "tags/emojibase-data@5.0.1"
                 }
             }
         }
