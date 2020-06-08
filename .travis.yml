@@ -6,6 +6,7 @@ php:
   - 7.1
   - 7.2
   - 7.3
+  - 7.4
 
 before_script:
   - curl -sSfL -o ~/.phpenv/versions/hhvm/bin/phpunit https://phar.phpunit.de/phpunit-5.7.26.phar
