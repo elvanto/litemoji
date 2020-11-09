@@ -5,12 +5,23 @@ function normalizeShortcode($shortcode) {
     return str_replace('-', '_', strtolower($shortcode));
 }
 
-$data = json_decode(file_get_contents(__DIR__ . '/../vendor/milesj/emojibase/packages/data/en/raw.json'), true);
+$data = json_decode(file_get_contents(__DIR__ . '/../vendor/milesj/emojibase/packages/data/en/data.raw.json'), true);
+$shortcodes = json_decode(file_get_contents(__DIR__ . '/../vendor/milesj/emojibase/packages/data/en/shortcodes/emojibase.raw.json'), true);
+
 $emoji_array = require(__DIR__ . '/../src/shortcodes-array.php');
 $existing_shortcodes = array_map('normalizeShortcode', array_keys($emoji_array));
 
 foreach ($data as $emoji) {
-    foreach ($emoji['shortcodes'] as $shortcode) {
+
+    if (!isset($shortcodes[$emoji['hexcode']])) {
+        continue;
+    }
+
+    if (!is_array($shortcodes[$emoji['hexcode']])) {
+        $shortcodes[$emoji['hexcode']] = [$shortcodes[$emoji['hexcode']]];
+    }
+
+    foreach ($shortcodes[$emoji['hexcode']] as $shortcode) {
 
         if (in_array(normalizeShortcode($shortcode), $existing_shortcodes)) {
             continue;
