@@ -48,7 +48,7 @@ class LitEmojiTest extends \PHPUnit_Framework_TestCase
 
     public function testConfigExcludeShortcodes()
     {
-        LitEmoji::config('excludeShortcodes', ['mobile', 'android']);
+        LitEmoji::config('excludeShortcodes', ['mobile', 'android', 'mobile_phone']);
         $this->assertEquals(':iphone:', LitEmoji::encodeShortcode('📱'));
     }
 }
