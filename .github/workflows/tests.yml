@@ -28,9 +28,6 @@ jobs:
       - name: Validate composer.json and composer.lock
         run: composer validate
 
-      - name: Setup Composer Access
-        run: composer config -g github-oauth.github.com ${{ secrets.ACTIONS_ACCESS_TOKEN }}
-
       - name: Cache Composer packages
         id: composer-cache
         uses: actions/cache@v2
