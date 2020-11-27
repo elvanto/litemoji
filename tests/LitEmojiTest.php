@@ -2,7 +2,9 @@
 
 namespace LitEmoji;
 
-class LitEmojiTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class LitEmojiTest extends TestCase
 {
     public function testUnicodeToShortcode()
     {
