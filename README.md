@@ -10,16 +10,6 @@ A PHP library simplifying the conversion of unicode, HTML and shortcode emoji.
 $ composer require elvanto/litemoji
 ```
 
-Or add to `composer.json`:
-
-```
-"require": {
-    "elvanto/litemoji": "^1.0.0"
-}
-```
-
-and then run composer update.
-
 Alternatively you can clone or download the library files.
 
 ## Usage
