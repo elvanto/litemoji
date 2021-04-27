@@ -13,7 +13,10 @@ $existing_shortcodes = array_map('normalizeShortcode', array_keys($emoji_array))
 
 foreach ($data as $emoji) {
 
-    if (!isset($shortcodes[$emoji['hexcode']])) {
+    if (
+            !isset($shortcodes[$emoji['hexcode']]) ||
+            !array_key_exists('group', $emoji) // Excludes regional indicator emoji that mess with flags
+    ) {
         continue;
     }
 
