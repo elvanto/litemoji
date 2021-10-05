@@ -12,7 +12,7 @@ class LitEmoji
     		   | \xF0\x9F[\x8C-\x97][\x80-\xBF] # Misc
     		   | \xF0\x9F\x98[\x80-\xBF]        # Smilies
     		   | \xF0\x9F\x99[\x80-\x8F]
-    		   | \xF0\x9F\x9A[\x80-\xBF]        # Transport and map symbols
+    		   | \xF0\x9F[\x9A-\x9B][\x80-\xBF] # Transport and map symbols
     		   | \xF0\x9F[\xA4-\xA7][\x80-\xBF] # Supplementary symbols and pictographs
     		)/x';
 

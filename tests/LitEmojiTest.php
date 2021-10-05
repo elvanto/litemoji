@@ -53,4 +53,10 @@ class LitEmojiTest extends TestCase
         LitEmoji::config('excludeShortcodes', ['mobile', 'android', 'mobile_phone']);
         $this->assertEquals(':iphone:', LitEmoji::encodeShortcode('📱'));
     }
+
+    public function testIssue25()
+    {
+        $text = LitEmoji::encodeShortcode('🚀🛒');
+        $this->assertEquals(':rocket::shopping_trolley:', $text);
+    }
 }
