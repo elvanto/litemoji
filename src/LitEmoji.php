@@ -187,6 +187,19 @@ class LitEmoji
                 break;
         }
     }
+    
+    /**
+     * Removes all emoji-sequences from string.
+     *
+     * @param string $source
+     * @return string
+     */
+    public static function removeEmoji(string $source):string
+    {
+        $content = self::encodeShortcode($source);
+        $content = preg_replace('/\:\w+\:/', '', $content);
+        return $content;
+    }
 
     private static function getShortcodes()
     {
@@ -195,7 +208,7 @@ class LitEmoji
         }
 
         // Skip excluded shortcodes
-        self::$shortcodes = array_filter(require(__DIR__ . '/shortcodes-array.php'), function($code) {
+        self::$shortcodes = array_filter(require(__DIR__ . '/shortcodes-array.php'), static function($code) {
             return !in_array($code, self::$excludedShortcodes);
         }, ARRAY_FILTER_USE_KEY);
 
