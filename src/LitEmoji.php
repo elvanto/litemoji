@@ -4,7 +4,7 @@ namespace LitEmoji;
 
 class LitEmoji
 {
-    const MB_REGEX = '/(
+    public const MB_REGEX = '/(
     		     \x23\xE2\x83\xA3               # Digits
     		     [\x30-\x39]\xE2\x83\xA3
     		   | \xE2[\x9C-\x9E][\x80-\xBF]     # Dingbats
