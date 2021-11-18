@@ -28,7 +28,7 @@ class LitEmoji
      * @param string $content
      * @return string
      */
-    public static function encodeShortcode($content)
+    public static function encodeShortcode($content): string
     {
         $content = self::entitiesToUnicode($content);
         $content = self::unicodeToShortcode($content);
@@ -42,7 +42,7 @@ class LitEmoji
      * @param string $content
      * @return string
      */
-    public static function encodeHtml($content)
+    public static function encodeHtml($content): string
     {
         $content = self::unicodeToShortcode($content);
         $content = self::shortcodeToEntities($content);
@@ -56,7 +56,7 @@ class LitEmoji
      * @param string $content
      * @return string
      */
-    public static function encodeUnicode($content)
+    public static function encodeUnicode($content): string
     {
         $content = self::shortcodeToUnicode($content);
         $content = self::entitiesToUnicode($content);
@@ -70,7 +70,7 @@ class LitEmoji
      * @param string $content
      * @return string
      */
-    public static function shortcodeToUnicode($content)
+    public static function shortcodeToUnicode($content): string
     {
         $replacements = self::getShortcodeCodepoints();
         return str_replace(array_keys($replacements), $replacements, $content);
@@ -82,10 +82,10 @@ class LitEmoji
      * @param string $content
      * @return string
      */
-    public static function entitiesToUnicode($content)
+    public static function entitiesToUnicode($content): string
     {
         /* Convert HTML entities to uppercase hexadecimal */
-        $content = preg_replace_callback('/\&\#(x?[a-zA-Z0-9]*?)\;/', function($matches) {
+        $content = preg_replace_callback('/\&\#(x?[a-zA-Z0-9]*?)\;/', static function($matches) {
             $code = $matches[1];
 
             if ($code[0] == 'x') {
@@ -105,7 +105,7 @@ class LitEmoji
      * @param string $content
      * @return string
      */
-    public static function unicodeToShortcode($content)
+    public static function unicodeToShortcode($content): string
     {
         $replacement = '';
         $encoding = mb_detect_encoding($content);
@@ -155,7 +155,8 @@ class LitEmoji
      * @param string $content
      * @return string
      */
-    public static function shortcodeToEntities($content) {
+    public static function shortcodeToEntities($content): string
+    {
         $replacements = self::getShortcodeEntities();
         return str_replace(array_keys($replacements), $replacements, $content);
     }
@@ -166,7 +167,7 @@ class LitEmoji
      * @param string $property
      * @param mixed $value
      */
-    public static function config($property, $value)
+    public static function config($property, $value): void
     {
         switch ($property) {
             case 'excludeShortcodes':
@@ -194,7 +195,7 @@ class LitEmoji
      * @param string $source
      * @return string
      */
-    public static function removeEmoji(string $source):string
+    public static function removeEmoji(string $source): string
     {
         $content = self::encodeShortcode($source);
         $content = preg_replace('/\:\w+\:/', '', $content);
