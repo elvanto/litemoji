@@ -51,7 +51,7 @@ class LitEmojiTest extends TestCase
     public function testRemoveEmoji()
     {
         $text = LitEmoji::removeEmoji('Some text 😊 including emoji 🚀');
-        $this->assertEquals('Some text  including emoji ', $text); //NB: smile emoji surrounded with TWO spaces.
+        $this->assertEquals('Some text  including emoji ', $text); // NB: smile emoji surrounded with TWO spaces.
     }
 
     public function testConfigExcludeShortcodes()
