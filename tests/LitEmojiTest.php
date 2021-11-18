@@ -47,6 +47,12 @@ class LitEmojiTest extends TestCase
         $text = LitEmoji::encodeShortcode(file_get_contents(__DIR__ . '/UnicodeIpsum'));
         $this->assertEquals(file_get_contents(__DIR__ . '/ShortcodeIpsum'), $text);
     }
+    
+    public function testRemoveEmoji()
+    {
+        $text = LitEmoji::removeEmoji('Some text 😊 including emoji 🚀');
+        $this->assertEquals('Some text  including emoji ', $text); // NB: smile emoji surrounded with TWO spaces.
+    }
 
     public function testConfigExcludeShortcodes()
     {

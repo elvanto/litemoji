@@ -25,6 +25,10 @@ echo LitEmoji::encodeHtml('Baby you light my :fire:! :smiley:');
 
 echo LitEmoji::encodeUnicode('Baby you light my :fire:! :smiley:');
 // 'Baby you light my 🔥! 😃'
+
+echo LitEmoji::removeEmoji('Baby you light my 🔥! 😃!!!');
+// 'Baby you light my ! !!!'
+
 ```
 
 # Configuration
