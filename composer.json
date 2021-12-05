@@ -9,7 +9,7 @@
         "ext-mbstring": "*"
     },
     "require-dev": {
-        "phpunit/phpunit": "9.4.*",
+        "phpunit/phpunit": "^9",
         "milesj/emojibase": "6.1.*"
     },
     "repositories": [
