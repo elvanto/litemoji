@@ -197,8 +197,16 @@ class LitEmoji
      */
     public static function removeEmoji(string $source): string
     {
-        $content = self::encodeShortcode($source);
+        /*$content = self::encodeShortcode($source);
         $content = preg_replace('/\:\w+\:/', '', $content);
+        return $content;*/
+        return self::replaceEmoji($source, '');
+    }
+    
+    public static function replaceEmoji(string $source, string $replacement):string
+    {
+        $content = self::encodeShortcode($source);
+        $content = preg_replace('/\:\w+\:/', $replacement, $content);
         return $content;
     }
 
