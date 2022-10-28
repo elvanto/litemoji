@@ -63,12 +63,13 @@ class LitEmojiTest extends TestCase
     public function testUnicodeMatching()
     {
         $shortcodes = require(__DIR__ . '/../src/shortcodes-array.php');
+        $shortcodes = array_flip($shortcodes);
 
-        foreach ($shortcodes as $shortcode => $codepoint) {
-            $unicode = LitEmoji::shortcodeToUnicode($shortcode);
+        foreach ($shortcodes as $shortcode) {
+            $unicode = LitEmoji::encodeUnicode(':' . $shortcode . ':');
             $matched = LitEmoji::unicodeToShortcode($unicode);
 
-            $this->assertEquals($shortcode, $matched);
+            $this->assertNotEquals($unicode, $matched);
         }
     }
 

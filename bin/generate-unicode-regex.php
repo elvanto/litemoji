@@ -74,7 +74,7 @@ foreach ($utf8 as $firstByte => $secondBytes) {
                     $littleFirst === $littleLast ? sprintf('\x%s', strtoupper($littleFirst)) : sprintf('[\x%s-\x%s]', strtoupper($littleFirst), strtoupper($littleLast)),
                 );
 
-                $expression = preg_replace('/^\\\\x00/', '', $expression);
+                $expression = preg_replace('/^(\\\\x00)+/', '', $expression);
                 $expressions[] = $expression;
 
                 $first = $last = hexdec($thirdByte);
@@ -105,7 +105,7 @@ foreach ($utf8 as $firstByte => $secondBytes) {
             $littleFirst === $littleLast ? sprintf('\x%s', strtoupper($littleFirst)) : sprintf('[\x%s-\x%s]', strtoupper($littleFirst), strtoupper($littleLast)),
         );
 
-        $expression = preg_replace('/^\\\\x00/', '', $expression);
+        $expression = preg_replace('/^(\\\\x00)+/', '', $expression);
         $expressions[] = $expression;
     }
 }
