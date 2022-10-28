@@ -4,18 +4,7 @@ namespace LitEmoji;
 
 class LitEmoji
 {
-    public const MB_REGEX = '/(
-    		     \x23\xE2\x83\xA3               # Digits
-    		     [\x30-\x39]\xE2\x83\xA3
-    		   | \xE2[\x9C-\x9E][\x80-\xBF]     # Dingbats
-    		   | \xF0\x9F[\x85-\x88][\xA6-\xBF] # Enclosed characters
-    		   | \xF0\x9F[\x8C-\x97][\x80-\xBF] # Misc
-    		   | \xF0\x9F\x98[\x80-\xBF]        # Smilies
-    		   | \xF0\x9F\x99[\x80-\x8F]
-    		   | \xF0\x9F[\x9A-\x9B][\x80-\xBF] # Transport and map symbols
-    		   | \xF0\x9F[\xA4-\xA7][\x80-\xBF] # Supplementary symbols and pictographs
-    		)/x';
-
+    private static $regex = null;
     private static $shortcodes = [];
     private static $shortcodeCodepoints = [];
     private static $shortcodeEntities = [];
@@ -113,7 +102,7 @@ class LitEmoji
 
         /* Break content along codepoint boundaries */
         $parts = preg_split(
-            self::MB_REGEX,
+            self::getRegex(),
             $content,
             -1,
             PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY
@@ -122,7 +111,7 @@ class LitEmoji
         /* Reconstruct content using shortcodes */
         $sequence = [];
         foreach ($parts as $offset => $part) {
-            if (preg_match(self::MB_REGEX, $part)) {
+            if (preg_match(self::getRegex(), $part)) {
                 $part = mb_convert_encoding($part, 'UTF-32', $encoding);
                 $words = unpack('N*', $part);
                 $codepoint = sprintf('%X', reset($words));
@@ -188,7 +177,7 @@ class LitEmoji
                 break;
         }
     }
-    
+
     /**
      * Removes all emoji-sequences from string.
      *
@@ -200,6 +189,16 @@ class LitEmoji
         $content = self::encodeShortcode($source);
         $content = preg_replace('/\:\w+\:/', '', $content);
         return $content;
+    }
+
+    private static function getRegex()
+    {
+        if (!is_null(self::$regex)) {
+            return self::$regex;
+        }
+
+        self::$regex = require(__DIR__ . '/unicode-patterns.php');
+        return self::$regex;
     }
 
     private static function getShortcodes()

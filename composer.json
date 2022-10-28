@@ -31,7 +31,8 @@
     },
     "scripts": {
         "update-resources": [
-            "@php bin/generate-shortcodes-array.php"
+            "@php bin/generate-shortcodes-array.php",
+            "@php bin/generate-unicode-regex.php"
         ]
     }
 }
