@@ -47,7 +47,7 @@ class LitEmojiTest extends TestCase
         $text = LitEmoji::encodeShortcode(file_get_contents(__DIR__ . '/UnicodeIpsum'));
         $this->assertEquals(file_get_contents(__DIR__ . '/ShortcodeIpsum'), $text);
     }
-    
+
     public function testRemoveEmoji()
     {
         $text = LitEmoji::removeEmoji('Some text 😊 including emoji 🚀');
@@ -58,6 +58,18 @@ class LitEmojiTest extends TestCase
     {
         LitEmoji::config('excludeShortcodes', ['mobile', 'android', 'mobile_phone']);
         $this->assertEquals(':iphone:', LitEmoji::encodeShortcode('📱'));
+    }
+
+    public function testUnicodeMatching()
+    {
+        $shortcodes = require(__DIR__ . '/../src/shortcodes-array.php');
+
+        foreach ($shortcodes as $shortcode => $codepoint) {
+            $unicode = LitEmoji::shortcodeToUnicode($shortcode);
+            $matched = LitEmoji::unicodeToShortcode($unicode);
+
+            $this->assertEquals($shortcode, $matched);
+        }
     }
 
     public function testIssue25()
