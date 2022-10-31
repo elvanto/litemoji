@@ -29,6 +29,8 @@ echo LitEmoji::encodeUnicode('Baby you light my :fire:! :smiley:');
 echo LitEmoji::removeEmoji('Baby you light my 🔥! 😃!!!');
 // 'Baby you light my ! !!!'
 
+echo LitEmoji::replaceEmoji('Baby you light my 🔥! 😃!!!', 'heart');
+// 'Baby you light my heart! heart!!!'
 ```
 
 # Configuration
