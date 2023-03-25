@@ -96,43 +96,38 @@ class LitEmoji
      */
     public static function unicodeToShortcode(string $content): string
     {
-        $replacement = '';
-        $encoding = mb_detect_encoding($content);
+        $tokenizer = new Tokenizer($content);
         $codepoints = array_flip(self::getShortcodes());
+        $replacement = '';
 
-        /* Break content along codepoint boundaries */
-        $parts = preg_split(
-            self::getRegex(),
-            $content,
-            -1,
-            PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY
-        );
+        while ($char = $tokenizer->consume()) {
+            $possibleReplacements = [];
+            $test = $char;
+            $limit = 8;
 
-        /* Reconstruct content using shortcodes */
-        $sequence = [];
-        foreach ($parts as $offset => $part) {
-            if (preg_match(self::getRegex(), $part)) {
-                $part = mb_convert_encoding($part, 'UTF-32', $encoding);
-                $words = unpack('N*', $part);
-                $codepoint = sprintf('%X', reset($words));
+            do {
+                $possibleReplacements[] = $codepoints[$test] ?? null;
 
-                $sequence[] = $codepoint;
-
-                if (isset($codepoints[$codepoint])) {
-                    $replacement .= ":$codepoints[$codepoint]:";
-                    $sequence = [];
-                } else {
-                    /* Check multi-codepoint sequence */
-                    $multi = implode('-', $sequence);
-
-                    if (isset($codepoints[$multi])) {
-                        $replacement .= ":$codepoints[$multi]:";
-                        $sequence = [];
-                    }
+                if (!$next = $tokenizer->consume()) {
+                    break;
                 }
-            } else {
-                $replacement .= $part;
+
+                $test = sprintf('%s-%s', $test, $next);
+                $limit--;
+            } while ($limit > 0);
+
+            while (count($possibleReplacements)) {
+                $tokenizer->rewind();
+
+                if ($shortcode = array_pop($possibleReplacements)) {
+                    $replacement .= sprintf(':%s:', $shortcode);
+
+                    continue 2;
+                }
+
             }
+
+            $replacement .= $tokenizer->raw();
         }
 
         return $replacement;
@@ -208,7 +203,7 @@ class LitEmoji
         }
 
         // Skip excluded shortcodes
-        self::$shortcodes = array_filter(require(__DIR__ . '/shortcodes-array.php'), static function($code) {
+        self::$shortcodes = array_filter(require(__DIR__ . '/emoji.php'), static function($code) {
             return !in_array($code, self::$excludedShortcodes);
         }, ARRAY_FILTER_USE_KEY);
 

@@ -62,7 +62,7 @@ class LitEmojiTest extends TestCase
 
     public function testUnicodeMatching()
     {
-        $shortcodes = require(__DIR__ . '/../src/shortcodes-array.php');
+        $shortcodes = require(__DIR__ . '/../src/emoji.php');
         $shortcodes = array_flip($shortcodes);
 
         foreach ($shortcodes as $shortcode) {
@@ -77,5 +77,11 @@ class LitEmojiTest extends TestCase
     {
         $text = LitEmoji::encodeShortcode('🚀🛒');
         $this->assertEquals(':rocket::shopping_trolley:', $text);
+    }
+
+    public function testIssue36()
+    {
+        $text = LitEmoji::encodeShortcode('🚂—🚃');
+        $this->assertEquals(':steam_locomotive:—:railway_car:', $text);
     }
 }
