@@ -4,12 +4,11 @@ namespace LitEmoji;
 
 class LitEmoji
 {
-    private static $regex = null;
-    private static $shortcodes = [];
-    private static $shortcodeCodepoints = [];
-    private static $shortcodeEntities = [];
-    private static $entityCodepoints = [];
-    private static $excludedShortcodes = [];
+    private static array $shortcodes = [];
+    private static array $shortcodeCodepoints = [];
+    private static array $shortcodeEntities = [];
+    private static array $entityCodepoints = [];
+    private static array $excludedShortcodes = [];
 
     /**
      * Converts all unicode emoji and HTML entities to plaintext shortcodes.
@@ -20,9 +19,7 @@ class LitEmoji
     public static function encodeShortcode(string $content): string
     {
         $content = self::entitiesToUnicode($content);
-        $content = self::unicodeToShortcode($content);
-
-        return $content;
+        return self::unicodeToShortcode($content);
     }
 
     /**
@@ -34,9 +31,7 @@ class LitEmoji
     public static function encodeHtml(string $content): string
     {
         $content = self::unicodeToShortcode($content);
-        $content = self::shortcodeToEntities($content);
-
-        return $content;
+        return self::shortcodeToEntities($content);
     }
 
     /**
@@ -48,9 +43,7 @@ class LitEmoji
     public static function encodeUnicode(string $content): string
     {
         $content = self::shortcodeToUnicode($content);
-        $content = self::entitiesToUnicode($content);
-
-        return $content;
+        return self::entitiesToUnicode($content);
     }
 
     /**
@@ -182,21 +175,10 @@ class LitEmoji
     public static function removeEmoji(string $source): string
     {
         $content = self::encodeShortcode($source);
-        $content = preg_replace('/\:\w+\:/', '', $content);
-        return $content;
+        return preg_replace('/:\w+:/', '', $content);
     }
 
-    private static function getRegex()
-    {
-        if (!is_null(self::$regex)) {
-            return self::$regex;
-        }
-
-        self::$regex = require(__DIR__ . '/unicode-patterns.php');
-        return self::$regex;
-    }
-
-    private static function getShortcodes()
+    private static function getShortcodes(): array
     {
         if (!empty(self::$shortcodes)) {
             return self::$shortcodes;
@@ -210,7 +192,7 @@ class LitEmoji
         return self::$shortcodes;
     }
 
-    private static function getShortcodeCodepoints()
+    private static function getShortcodeCodepoints(): array
     {
         if (!empty(self::$shortcodeCodepoints)) {
             return self::$shortcodeCodepoints;
@@ -230,7 +212,7 @@ class LitEmoji
         return self::$shortcodeCodepoints;
     }
 
-    private static function getEntityCodepoints()
+    private static function getEntityCodepoints(): array
     {
         if (!empty(self::$entityCodepoints)) {
             return self::$entityCodepoints;
@@ -252,7 +234,7 @@ class LitEmoji
         return self::$entityCodepoints;
     }
 
-    private static function getShortcodeEntities()
+    private static function getShortcodeEntities(): array
     {
         if (!empty(self::$shortcodeEntities)) {
             return self::$shortcodeEntities;

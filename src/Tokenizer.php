@@ -4,24 +4,10 @@ namespace LitEmoji;
 
 class Tokenizer
 {
-    /**
-     * @var string[]
-     */
-    private $source;
+    private array $source;
+    private string $encoding;
+    private string $offset;
 
-    /**
-     * @var string
-     */
-    private $encoding;
-
-    /**
-     * @var int
-     */
-    private $offset;
-
-    /**
-     * @param string $source
-     */
     public function __construct(string $source)
     {
         $this->source = mb_str_split($source);
