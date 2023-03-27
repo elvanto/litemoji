@@ -108,8 +108,6 @@ class LitEmoji
         $replaced = str_replace(array_keys($replacements), $replacements, $content);
 
         if ($encoding !== false && $encoding !== 'UTF-8' && $encoding !== 'ASCII') {
-            var_dump('converting');
-
             $replaced = mb_convert_encoding($replaced, $encoding, 'UTF-8');
         }
 
