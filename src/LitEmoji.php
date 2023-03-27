@@ -89,41 +89,20 @@ class LitEmoji
      */
     public static function unicodeToShortcode(string $content): string
     {
-        $tokenizer = new Tokenizer($content);
-        $codepoints = array_flip(self::getShortcodes());
-        $replacement = '';
+        $codepoints = self::getShortcodeCodepoints();
+        $encoding = mb_detect_encoding($content);
 
-        while ($char = $tokenizer->consume()) {
-            $possibleReplacements = [];
-            $test = $char;
-            $limit = 8;
-
-            do {
-                $possibleReplacements[] = $codepoints[$test] ?? null;
-
-                if (!$next = $tokenizer->consume()) {
-                    break;
-                }
-
-                $test = sprintf('%s-%s', $test, $next);
-                $limit--;
-            } while ($limit > 0);
-
-            while (count($possibleReplacements)) {
-                $tokenizer->rewind();
-
-                if ($shortcode = array_pop($possibleReplacements)) {
-                    $replacement .= sprintf(':%s:', $shortcode);
-
-                    continue 2;
-                }
-
-            }
-
-            $replacement .= $tokenizer->raw();
+        if ($encoding !== 'UTF-8') {
+            $content = mb_convert_encoding($content, 'UTF-8', $encoding);
         }
 
-        return $replacement;
+        $replaced = str_replace(array_values($codepoints), array_keys($codepoints), $content);
+
+        if ($encoding !== 'UTF-8') {
+            $replaced = mb_convert_encoding($replaced, $encoding, 'UTF-8');
+        }
+
+        return $replaced;
     }
 
     /**
@@ -162,6 +141,10 @@ class LitEmoji
 
                 // Invalidate shortcode cache
                 self::$shortcodes = [];
+                self::$shortcodeCodepoints = [];
+                self::$shortcodeEntities = [];
+                self::$entityCodepoints = [];
+                self::$excludedShortcodes = [];
                 break;
         }
     }
