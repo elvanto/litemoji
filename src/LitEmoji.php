@@ -37,35 +37,55 @@ class LitEmoji
     /**
      * Converts all plaintext shortcodes and HTML entities to unicode codepoints.
      *
-     * @param string $content
+     * @param string      $content
+     * @param string|null $encoding
      * @return string
      */
-    public static function encodeUnicode(string $content): string
+    public static function encodeUnicode(string $content, string $encoding = null): string
     {
-        $content = self::shortcodeToUnicode($content);
-        return self::entitiesToUnicode($content);
+        $content = self::shortcodeToUnicode($content, $encoding);
+        return self::entitiesToUnicode($content, $encoding);
     }
 
     /**
      * Converts plaintext shortcodes to HTML entities.
      *
-     * @param string $content
+     * @param string      $content
+     * @param string|null $encoding
      * @return string
      */
-    public static function shortcodeToUnicode(string $content): string
+    public static function shortcodeToUnicode(string $content, string $encoding = null): string
     {
         $replacements = self::getShortcodeCodepoints();
-        return str_replace(array_keys($replacements), $replacements, $content);
+
+        if (!$encoding) {
+            $encoding = mb_detect_encoding($content);
+        }
+
+        if ($encoding !== false && $encoding !== 'UTF-8' && $encoding !== 'ASCII') {
+            $content = mb_convert_encoding($content, 'UTF-8', $encoding);
+        }
+
+        $replaced = str_replace(array_keys($replacements), $replacements, $content);
+
+        if ($encoding !== false && $encoding !== 'UTF-8' && $encoding !== 'ASCII') {
+            $replaced = mb_convert_encoding($replaced, $encoding, 'UTF-8');
+        }
+
+        return $replaced;
     }
 
     /**
      * Converts HTML entities to unicode codepoints.
      *
-     * @param string $content
+     * @param string      $content
+     * @param string|null $encoding
      * @return string
      */
-    public static function entitiesToUnicode(string $content): string
+    public static function entitiesToUnicode(string $content, string $encoding = null): string
     {
+        $replacements = self::getEntityCodepoints();
+
         /* Convert HTML entities to uppercase hexadecimal */
         $content = preg_replace_callback('/\&\#(x?[a-zA-Z0-9]*?)\;/', static function($matches) {
             $code = $matches[1];
@@ -77,28 +97,47 @@ class LitEmoji
             return '&#x' . strtoupper(dechex($code)) . ';';
         }, $content);
 
-        $replacements = self::getEntityCodepoints();
-        return str_replace(array_keys($replacements), $replacements, $content);
+        if (!$encoding) {
+            $encoding = mb_detect_encoding($content);
+        }
+
+        if ($encoding !== false && $encoding !== 'UTF-8' && $encoding !== 'ASCII') {
+            $content = mb_convert_encoding($content, 'UTF-8', $encoding);
+        }
+
+        $replaced = str_replace(array_keys($replacements), $replacements, $content);
+
+        if ($encoding !== false && $encoding !== 'UTF-8' && $encoding !== 'ASCII') {
+            var_dump('converting');
+
+            $replaced = mb_convert_encoding($replaced, $encoding, 'UTF-8');
+        }
+
+        return $replaced;
     }
 
     /**
      * Converts unicode codepoints to plaintext shortcodes.
      *
-     * @param string $content
+     * @param string      $content
+     * @param string|null $encoding
      * @return string
      */
-    public static function unicodeToShortcode(string $content): string
+    public static function unicodeToShortcode(string $content, string $encoding = null): string
     {
         $codepoints = self::getShortcodeCodepoints();
-        $encoding = mb_detect_encoding($content);
 
-        if ($encoding !== 'UTF-8') {
+        if (!$encoding) {
+            $encoding = mb_detect_encoding($content);
+        }
+
+        if ($encoding !== false && $encoding !== 'UTF-8' && $encoding !== 'ASCII') {
             $content = mb_convert_encoding($content, 'UTF-8', $encoding);
         }
 
         $replaced = str_replace(array_values($codepoints), array_keys($codepoints), $content);
 
-        if ($encoding !== 'UTF-8') {
+        if ($encoding !== false && $encoding !== 'UTF-8' && $encoding !== 'ASCII') {
             $replaced = mb_convert_encoding($replaced, $encoding, 'UTF-8');
         }
 
