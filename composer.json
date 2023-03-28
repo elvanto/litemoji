@@ -5,7 +5,7 @@
     "keywords": ["php-emoji", "emoji"],
     "license": "MIT",
     "require": {
-        "php": ">=7.3",
+        "php": ">=7.4",
         "ext-mbstring": "*"
     },
     "require-dev": {
@@ -31,8 +31,7 @@
     },
     "scripts": {
         "update-resources": [
-            "@php bin/generate-shortcodes-array.php",
-            "@php bin/generate-unicode-regex.php"
+            "@php bin/generate-shortcodes-array.php"
         ]
     }
 }

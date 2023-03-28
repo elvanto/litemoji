@@ -9,13 +9,13 @@ class LitEmojiTest extends TestCase
     public function testUnicodeToShortcode()
     {
         $text = LitEmoji::encodeShortcode('My mixtape is 🔥. Made in 🇦🇺!');
-        $this->assertEquals('My mixtape is :fire:. Made in :flag-au:!', $text);
+        $this->assertEquals('My mixtape is :fire:. Made in :australia:!', $text);
     }
 
     public function testHtmlToShortcode()
     {
         $text = LitEmoji::encodeShortcode('My mixtape is &#x1F525;. Made in &#x1F1E6;&#x1F1FA;!');
-        $this->assertEquals('My mixtape is :fire:. Made in :flag-au:!', $text);
+        $this->assertEquals('My mixtape is :fire:. Made in :australia:!', $text);
     }
 
     public function testShortcodeToHtml()
@@ -57,12 +57,12 @@ class LitEmojiTest extends TestCase
     public function testConfigExcludeShortcodes()
     {
         LitEmoji::config('excludeShortcodes', ['mobile', 'android', 'mobile_phone']);
-        $this->assertEquals(':iphone:', LitEmoji::encodeShortcode('📱'));
+        $this->assertEquals(':android:', LitEmoji::encodeShortcode('📱'));
     }
 
     public function testUnicodeMatching()
     {
-        $shortcodes = require(__DIR__ . '/../src/shortcodes-array.php');
+        $shortcodes = require(__DIR__ . '/../src/emoji.php');
         $shortcodes = array_flip($shortcodes);
 
         foreach ($shortcodes as $shortcode) {
@@ -76,6 +76,12 @@ class LitEmojiTest extends TestCase
     public function testIssue25()
     {
         $text = LitEmoji::encodeShortcode('🚀🛒');
-        $this->assertEquals(':rocket::shopping_trolley:', $text);
+        $this->assertEquals(':rocket::shopping_cart:', $text);
+    }
+
+    public function testIssue36()
+    {
+        $text = LitEmoji::encodeShortcode('🚂—🚃');
+        $this->assertEquals(':steam_locomotive:—:railway_car:', $text);
     }
 }

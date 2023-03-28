@@ -1,21 +1,22 @@
 #!/usr/bin/env php
 <?php
 
-function normalizeShortcode($shortcode) {
+function normalizeShortcode($shortcode)
+{
     return str_replace('-', '_', strtolower($shortcode));
 }
 
+// Collect available emoji
 $data = json_decode(file_get_contents(__DIR__ . '/../vendor/milesj/emojibase/packages/data/en/data.raw.json'), true);
 $shortcodes = json_decode(file_get_contents(__DIR__ . '/../vendor/milesj/emojibase/packages/data/en/shortcodes/emojibase.raw.json'), true);
 
-$emoji_array = require(__DIR__ . '/../src/shortcodes-array.php');
-$existing_shortcodes = array_map('normalizeShortcode', array_keys($emoji_array));
+$emojiList = require(__DIR__ . '/../src/emoji.php');
+$existingShortcodes = array_map('normalizeShortcode', array_keys($emojiList));
 
 foreach ($data as $emoji) {
-
     if (
-            !isset($shortcodes[$emoji['hexcode']]) ||
-            !array_key_exists('group', $emoji) // Excludes regional indicator emoji that mess with flags
+        !isset($shortcodes[$emoji['hexcode']]) ||
+        !array_key_exists('group', $emoji) // Excludes regional indicator emoji that mess with flags
     ) {
         continue;
     }
@@ -25,19 +26,21 @@ foreach ($data as $emoji) {
     }
 
     foreach ($shortcodes[$emoji['hexcode']] as $shortcode) {
-
-        if (in_array(normalizeShortcode($shortcode), $existing_shortcodes)) {
+        if (in_array(normalizeShortcode($shortcode), $existingShortcodes)) {
             continue;
         }
 
-        $emoji_array[ (string) $shortcode] = $emoji['hexcode'];
+        $emojiList[(string)$shortcode] = $emoji['hexcode'];
     }
 }
 
-ksort($emoji_array, SORT_NATURAL);
-$output = "<?php\nreturn [\n";
-foreach ($emoji_array as $shortcode => $codepoints) {
-    $output .= "  '$shortcode' => '$codepoints',\n";
+// Order by longest codepoint to ensure replacement of ZWJ emoji first
+uasort($emojiList, fn ($a, $b) => strlen($b) <=> strlen($a));
+
+// Generate cachable PHP code
+$output = [];
+foreach ($emojiList as $shortcode => $codepoints) {
+    $output[] = sprintf("'%s'=>'%s'", $shortcode, $codepoints);
 };
-$output .= '];';
-file_put_contents('src/shortcodes-array.php', $output);
+
+file_put_contents('src/emoji.php', sprintf('<?php return [%s];', implode(',', $output)));
