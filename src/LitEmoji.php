@@ -9,6 +9,7 @@ class LitEmoji
     private static array $shortcodeEntities = [];
     private static array $entityCodepoints = [];
     private static array $excludedShortcodes = [];
+    private static array $aliasesShortcodes = [];
 
     /**
      * Converts all unicode emoji and HTML entities to plaintext shortcodes.
@@ -183,6 +184,15 @@ class LitEmoji
                 self::$entityCodepoints = [];
                 self::$excludedShortcodes = [];
                 break;
+            case 'includeShortcodes':
+                self::$aliasesShortcodes = (array) $value;
+
+                // Invalidate shortcode cache
+                self::$shortcodes = [];
+                self::$shortcodeCodepoints = [];
+                self::$shortcodeEntities = [];
+                self::$entityCodepoints = [];
+                break;
         }
     }
 
@@ -208,6 +218,13 @@ class LitEmoji
         self::$shortcodes = array_filter(require(__DIR__ . '/emoji.php'), static function($code) {
             return !in_array($code, self::$excludedShortcodes);
         }, ARRAY_FILTER_USE_KEY);
+
+        // Append shortcode aliases
+        foreach (self::$aliasesShortcodes as $alias => $code) {
+            if (array_key_exists($code, self::$shortcodes)) {
+                self::$shortcodes[$alias] = self::$shortcodes[$code];
+            }
+        }
 
         return self::$shortcodes;
     }
