@@ -62,7 +62,7 @@ class LitEmojiTest extends TestCase
 
     public function testUnicodeMatching()
     {
-        $shortcodes = require(__DIR__ . '/../src/emoji.php');
+        $shortcodes = require(__DIR__ . '/../src/emojibase.php');
         $shortcodes = array_flip($shortcodes);
 
         foreach ($shortcodes as $shortcode) {
@@ -71,6 +71,12 @@ class LitEmojiTest extends TestCase
 
             $this->assertNotEquals($unicode, $matched);
         }
+    }
+
+    public function testPreset()
+    {
+        LitEmoji::usePreset('cldr');
+        $this->assertEquals('👍', LitEmoji::encodeUnicode(':thumbs_up:'));
     }
 
     public function testIssue25()

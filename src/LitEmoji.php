@@ -4,11 +4,31 @@ namespace LitEmoji;
 
 class LitEmoji
 {
+    private static string $preset = 'emojibase';
     private static array $shortcodes = [];
     private static array $shortcodeCodepoints = [];
     private static array $shortcodeEntities = [];
     private static array $entityCodepoints = [];
     private static array $excludedShortcodes = [];
+
+    /**
+     * Switches to a different emoji preset, clearing the shortcode cache.
+     *
+     * @param string $preset
+     * @return void
+     */
+    public static function usePreset(string $preset)
+    {
+        if (!file_exists(sprintf('%s/%s.php', __DIR__, $preset))) {
+            throw new \InvalidArgumentException('Invalid emoji preset.');
+        }
+
+        self::$preset = $preset;
+        self::$shortcodes = [];
+        self::$shortcodeCodepoints = [];
+        self::$shortcodeEntities = [];
+        self::$entityCodepoints = [];
+    }
 
     /**
      * Converts all unicode emoji and HTML entities to plaintext shortcodes.
@@ -205,7 +225,7 @@ class LitEmoji
         }
 
         // Skip excluded shortcodes
-        self::$shortcodes = array_filter(require(__DIR__ . '/emoji.php'), static function($code) {
+        self::$shortcodes = array_filter(require(sprintf('%s/%s.php', __DIR__, self::$preset)), static function($code) {
             return !in_array($code, self::$excludedShortcodes);
         }, ARRAY_FILTER_USE_KEY);
 
