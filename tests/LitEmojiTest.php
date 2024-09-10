@@ -6,6 +6,11 @@ use PHPUnit\Framework\TestCase;
 
 class LitEmojiTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        LitEmoji::usePreset('emojibase');
+    }
+
     public function testUnicodeToShortcode()
     {
         $text = LitEmoji::encodeShortcode('My mixtape is 🔥. Made in 🇦🇺!');
@@ -75,6 +80,7 @@ class LitEmojiTest extends TestCase
 
     public function testPreset()
     {
+        $this->assertEquals('👍', LitEmoji::encodeUnicode(':thumbsup:'));
         LitEmoji::usePreset('cldr');
         $this->assertEquals('👍', LitEmoji::encodeUnicode(':thumbs_up:'));
     }
