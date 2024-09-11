@@ -10,6 +10,7 @@ class LitEmoji
     private static array $shortcodeEntities = [];
     private static array $entityCodepoints = [];
     private static array $excludedShortcodes = [];
+    private static array $aliasedShortcodes = [];
 
     /**
      * Switches to a different emoji preset, clearing the shortcode cache.
@@ -203,6 +204,15 @@ class LitEmoji
                 self::$entityCodepoints = [];
                 self::$excludedShortcodes = [];
                 break;
+            case 'aliasShortcodes':
+                self::$aliasedShortcodes = (array) $value;
+
+                // Invalidate shortcode cache
+                self::$shortcodes = [];
+                self::$shortcodeCodepoints = [];
+                self::$shortcodeEntities = [];
+                self::$entityCodepoints = [];
+                break;
         }
     }
 
@@ -228,6 +238,13 @@ class LitEmoji
         self::$shortcodes = array_filter(require(sprintf('%s/%s.php', __DIR__, self::$preset)), static function($code) {
             return !in_array($code, self::$excludedShortcodes);
         }, ARRAY_FILTER_USE_KEY);
+
+        // Append shortcode aliases
+        foreach (self::$aliasedShortcodes as $alias => $code) {
+            if (array_key_exists($code, self::$shortcodes)) {
+                self::$shortcodes[$alias] = self::$shortcodes[$code];
+            }
+        }
 
         return self::$shortcodes;
     }

@@ -65,6 +65,12 @@ class LitEmojiTest extends TestCase
         $this->assertEquals(':android:', LitEmoji::encodeShortcode('📱'));
     }
 
+    public function testConfigAliasShortcodes()
+    {
+        LitEmoji::config('aliasShortcodes', ['thumbs_up' => 'thumbsup', 'yeah' => 'thumbsup']);
+        $this->assertEquals('👍', LitEmoji::encodeUnicode(':yeah:'));
+    }
+
     public function testUnicodeMatching()
     {
         $shortcodes = require(__DIR__ . '/../src/emojibase.php');
