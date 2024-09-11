@@ -6,6 +6,12 @@ use PHPUnit\Framework\TestCase;
 
 class LitEmojiTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        LitEmoji::config('excludeShortcodes', []);
+        LitEmoji::usePreset('emojibase');
+    }
+
     public function testUnicodeToShortcode()
     {
         $text = LitEmoji::encodeShortcode('My mixtape is 🔥. Made in 🇦🇺!');
@@ -57,10 +63,10 @@ class LitEmojiTest extends TestCase
     public function testConfigExcludeShortcodes()
     {
         LitEmoji::config('excludeShortcodes', ['mobile', 'android', 'mobile_phone']);
-        $this->assertEquals(':android:', LitEmoji::encodeShortcode('📱'));
+        $this->assertEquals(':iphone:', LitEmoji::encodeShortcode('📱'));
     }
 
-    public function testConfigIncludeShortcodeAliases()
+    public function testConfigAliasShortcodes()
     {
         LitEmoji::config('aliasShortcodes', ['thumbs_up' => 'thumbsup', 'yeah' => 'thumbsup']);
         $this->assertEquals('👍', LitEmoji::encodeUnicode(':yeah:'));
@@ -68,15 +74,22 @@ class LitEmojiTest extends TestCase
 
     public function testUnicodeMatching()
     {
-        $shortcodes = require __DIR__ . '/../src/emoji.php';
+        $shortcodes = require(__DIR__ . '/../src/emojibase.php');
         $shortcodes = array_flip($shortcodes);
 
         foreach ($shortcodes as $shortcode) {
-            $unicode = LitEmoji::encodeUnicode(':'.$shortcode.':');
+            $unicode = LitEmoji::encodeUnicode(':' . $shortcode . ':');
             $matched = LitEmoji::unicodeToShortcode($unicode);
 
             $this->assertNotEquals($unicode, $matched);
         }
+    }
+
+    public function testPreset()
+    {
+        $this->assertEquals('👍', LitEmoji::encodeUnicode(':thumbsup:'));
+        LitEmoji::usePreset('cldr');
+        $this->assertEquals('👍', LitEmoji::encodeUnicode(':thumbs_up:'));
     }
 
     public function testIssue25()
