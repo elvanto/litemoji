@@ -44,8 +44,8 @@ class LitEmojiTest extends TestCase
 
     public function testUnicodeToShortcodeTiming()
     {
-        $text = LitEmoji::encodeShortcode(file_get_contents(__DIR__.'/UnicodeIpsum'));
-        $this->assertEquals(file_get_contents(__DIR__.'/ShortcodeIpsum'), $text);
+        $text = LitEmoji::encodeShortcode(file_get_contents(__DIR__ . '/UnicodeIpsum'));
+        $this->assertEquals(file_get_contents(__DIR__ . '/ShortcodeIpsum'), $text);
     }
 
     public function testRemoveEmoji()
@@ -62,13 +62,13 @@ class LitEmojiTest extends TestCase
 
     public function testConfigIncludeShortcodeAliases()
     {
-        LitEmoji::config('includeShortcodes', ['thumbs_up' => 'thumbsup', 'yeah' => 'thumbsup']);
+        LitEmoji::config('aliasShortcodes', ['thumbs_up' => 'thumbsup', 'yeah' => 'thumbsup']);
         $this->assertEquals('👍', LitEmoji::encodeUnicode(':yeah:'));
     }
 
     public function testUnicodeMatching()
     {
-        $shortcodes = require __DIR__.'/../src/emoji.php';
+        $shortcodes = require __DIR__ . '/../src/emoji.php';
         $shortcodes = array_flip($shortcodes);
 
         foreach ($shortcodes as $shortcode) {

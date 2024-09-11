@@ -43,7 +43,7 @@ echo LitEmoji::encodeShortcode('📱');
 // ':iphone:'
 
 // Add aliases for custom shortcodes
-LitEmoji::config('includeShortcodes', ['yeah' => 'thumbsup']);
+LitEmoji::config('aliasShortcodes', ['yeah' => 'thumbsup']);
 echo LitEmoji::encodeUnicode('Hell :yeah:!');
 // 'Hell 👍!'
 ```
