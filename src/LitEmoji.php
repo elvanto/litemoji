@@ -25,10 +25,7 @@ class LitEmoji
         }
 
         self::$preset = $preset;
-        self::$shortcodes = [];
-        self::$shortcodeCodepoints = [];
-        self::$shortcodeEntities = [];
-        self::$entityCodepoints = [];
+        self::invalidateCache();
     }
 
     /**
