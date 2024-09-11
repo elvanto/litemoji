@@ -60,13 +60,19 @@ class LitEmojiTest extends TestCase
         $this->assertEquals(':android:', LitEmoji::encodeShortcode('📱'));
     }
 
+    public function testConfigIncludeShortcodeAliases()
+    {
+        LitEmoji::config('aliasShortcodes', ['thumbs_up' => 'thumbsup', 'yeah' => 'thumbsup']);
+        $this->assertEquals('👍', LitEmoji::encodeUnicode(':yeah:'));
+    }
+
     public function testUnicodeMatching()
     {
-        $shortcodes = require(__DIR__ . '/../src/emoji.php');
+        $shortcodes = require __DIR__ . '/../src/emoji.php';
         $shortcodes = array_flip($shortcodes);
 
         foreach ($shortcodes as $shortcode) {
-            $unicode = LitEmoji::encodeUnicode(':' . $shortcode . ':');
+            $unicode = LitEmoji::encodeUnicode(':'.$shortcode.':');
             $matched = LitEmoji::unicodeToShortcode($unicode);
 
             $this->assertNotEquals($unicode, $matched);
