@@ -8,6 +8,7 @@ class LitEmojiTest extends TestCase
 {
     protected function setUp(): void
     {
+        LitEmoji::config('excludeShortcodes', []);
         LitEmoji::usePreset('emojibase');
     }
 
@@ -62,7 +63,7 @@ class LitEmojiTest extends TestCase
     public function testConfigExcludeShortcodes()
     {
         LitEmoji::config('excludeShortcodes', ['mobile', 'android', 'mobile_phone']);
-        $this->assertEquals(':android:', LitEmoji::encodeShortcode('📱'));
+        $this->assertEquals(':iphone:', LitEmoji::encodeShortcode('📱'));
     }
 
     public function testConfigAliasShortcodes()

@@ -197,21 +197,12 @@ class LitEmoji
                     }
                 }
 
-                // Invalidate shortcode cache
-                self::$shortcodes = [];
-                self::$shortcodeCodepoints = [];
-                self::$shortcodeEntities = [];
-                self::$entityCodepoints = [];
-                self::$excludedShortcodes = [];
+                self::invalidateCache();
                 break;
             case 'aliasShortcodes':
                 self::$aliasedShortcodes = (array) $value;
 
-                // Invalidate shortcode cache
-                self::$shortcodes = [];
-                self::$shortcodeCodepoints = [];
-                self::$shortcodeEntities = [];
-                self::$entityCodepoints = [];
+                self::invalidateCache();
                 break;
         }
     }
@@ -307,5 +298,18 @@ class LitEmoji
         }
 
         return self::$shortcodeEntities;
+    }
+
+    /**
+     * Invalidates the shortcode cache.
+     *
+     * @return void
+     */
+    private static function invalidateCache(): void
+    {
+        self::$shortcodes = [];
+        self::$shortcodeCodepoints = [];
+        self::$shortcodeEntities = [];
+        self::$entityCodepoints = [];
     }
 }

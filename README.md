@@ -44,8 +44,8 @@ echo LitEmoji::encodeShortcode('📱');
 
 // Add aliases for custom shortcodes
 LitEmoji::config('aliasShortcodes', ['yeah' => 'thumbsup']);
-echo LitEmoji::encodeUnicode('Hell :yeah:!');
-// 'Hell 👍!'
+echo LitEmoji::encodeUnicode('Can do :yeah:!');
+// 'Can do 👍!'
 ```
 
 # Encodings
