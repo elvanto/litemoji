@@ -2,9 +2,9 @@ name: "CodeQL"
 
 on:
   push:
-    branches: [ "qa", "master" ]
+    branches: [ "master" ]
   pull_request:
-    branches: [ "qa", "master" ]
+    branches: [ "master" ]
   schedule:
     - cron: '30 12 * * 1'
 
@@ -18,5 +18,6 @@ jobs:
     with:
       github-event-name: ${{ github.event_name }}
       php-version: ${{ matrix.php-versions }}
+      php-extensions: pdo_mysql
     secrets:
       actions-access-token: ${{ secrets.ACTIONS_ACCESS_TOKEN }}
