@@ -59,7 +59,7 @@ class LitEmoji
      * @param string|null $encoding
      * @return string
      */
-    public static function encodeUnicode(string $content, string $encoding = null): string
+    public static function encodeUnicode(string $content, ?string $encoding = null): string
     {
         $content = self::shortcodeToUnicode($content, $encoding);
         return self::entitiesToUnicode($content, $encoding);
@@ -72,7 +72,7 @@ class LitEmoji
      * @param string|null $encoding
      * @return string
      */
-    public static function shortcodeToUnicode(string $content, string $encoding = null): string
+    public static function shortcodeToUnicode(string $content, ?string $encoding = null): string
     {
         $replacements = self::getShortcodeCodepoints();
 
@@ -100,7 +100,7 @@ class LitEmoji
      * @param string|null $encoding
      * @return string
      */
-    public static function entitiesToUnicode(string $content, string $encoding = null): string
+    public static function entitiesToUnicode(string $content, ?string $encoding = null): string
     {
         $replacements = self::getEntityCodepoints();
 
@@ -139,7 +139,7 @@ class LitEmoji
      * @param string|null $encoding
      * @return string
      */
-    public static function unicodeToShortcode(string $content, string $encoding = null): string
+    public static function unicodeToShortcode(string $content, ?string $encoding = null): string
     {
         $codepoints = self::getShortcodeCodepoints();
 
