@@ -29,6 +29,9 @@ echo LitEmoji::encodeUnicode('Baby you light my :fire:! :smiley:');
 echo LitEmoji::removeEmoji('Baby you light my 🔥! 😃!!!');
 // 'Baby you light my ! !!!'
 
+echo LitEmoji::replaceEmoji('Baby you light my 🔥! 😃!!!', 'heart');
+// 'Baby you light my heart! heart!!!'
+
 ```
 
 # Configuration
@@ -46,6 +49,18 @@ echo LitEmoji::encodeShortcode('📱');
 LitEmoji::config('aliasShortcodes', ['yeah' => 'thumbsup']);
 echo LitEmoji::encodeUnicode('Can do :yeah:!');
 // 'Can do 👍!'
+```
+
+# Replace Emoji
+
+The `replaceEmoji()` method allows you to replace all emoji in a string with custom text. Only valid emoji shortcodes are replaced, leaving other `:word:` patterns unchanged.
+
+```php
+echo LitEmoji::replaceEmoji('Hello 😊 and :custom_tag:', '[EMOJI]');
+// 'Hello [EMOJI] and :custom_tag:'
+
+echo LitEmoji::replaceEmoji('Fire 🔥 and water 💧', '***');
+// 'Fire *** and water ***'
 ```
 
 # Encodings
