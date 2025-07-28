@@ -152,6 +152,9 @@ class LitEmoji
         }
 
         $replaced = str_replace(array_values($codepoints), array_keys($codepoints), $content);
+        
+        // Post-process to combine skin tone and gender modifiers
+        $replaced = self::combineSkinToneModifiers($replaced);
 
         if ($encoding !== false && $encoding !== 'UTF-8' && $encoding !== 'ASCII') {
             $replaced = mb_convert_encoding($replaced, $encoding, 'UTF-8');
@@ -308,5 +311,42 @@ class LitEmoji
         self::$shortcodeCodepoints = [];
         self::$shortcodeEntities = [];
         self::$entityCodepoints = [];
+    }
+
+
+    /**
+     * Combine skin tone and gender modifiers with base emoji shortcodes.
+     *
+     * @param string $content
+     * @return string
+     */
+    private static function combineSkinToneModifiers(string $content): string
+    {
+        // Handle specific complex emoji combinations FIRST (before general skin tone processing)
+        // construction_worker + skin-tone + gender = woman_construction_worker_toneX
+        $content = preg_replace(
+            '/(:construction_worker)::skin-tone-([2-6]):‍:female:️/',
+            ':woman_construction_worker_tone$2',
+            $content
+        );
+
+        // Handle general skin tone combinations - match :emoji::skin-tone-X: patterns
+        $content = preg_replace('/(:[\w_]+:):skin-tone-2:/', '$1_tone1', $content);
+        $content = preg_replace('/(:[\w_]+:):skin-tone-3:/', '$1_tone2', $content);
+        $content = preg_replace('/(:[\w_]+:):skin-tone-4:/', '$1_tone3', $content);
+        $content = preg_replace('/(:[\w_]+:):skin-tone-5:/', '$1_tone4', $content);
+        $content = preg_replace('/(:[\w_]+:):skin-tone-6:/', '$1_tone5', $content);
+        
+        // Map skin tone numbers for captured groups in complex patterns (e.g. construction_worker_tone6 -> construction_worker_tone5)
+        $content = str_replace([
+            'woman_construction_worker_tone2', 'woman_construction_worker_tone3', 'woman_construction_worker_tone4', 'woman_construction_worker_tone5', 'woman_construction_worker_tone6'
+        ], [
+            'woman_construction_worker_tone1', 'woman_construction_worker_tone2', 'woman_construction_worker_tone3', 'woman_construction_worker_tone4', 'woman_construction_worker_tone5'
+        ], $content);
+        
+        // Clean up any remaining gender markers and variation selectors that didn't combine
+        $content = str_replace(['‍:female:️', '‍:male:️', '‍', '️'], '', $content);
+
+        return $content;
     }
 }
