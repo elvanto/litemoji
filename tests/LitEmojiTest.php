@@ -103,4 +103,38 @@ class LitEmojiTest extends TestCase
         $text = LitEmoji::encodeShortcode('🚂—🚃');
         $this->assertEquals(':steam_locomotive:—:railway_car:', $text);
     }
+
+    public function testReplaceEmoji()
+    {
+        // Test basic emoji replacement
+        $text = LitEmoji::replaceEmoji('Some text 😊 including emoji 🚀', '[EMOJI]');
+        $this->assertEquals('Some text [EMOJI] including emoji [EMOJI]', $text);
+        
+        // Test with different replacement text
+        $text = LitEmoji::replaceEmoji('Baby you light my 🔥! 😃!!!', 'heart');
+        $this->assertEquals('Baby you light my heart! heart!!!', $text);
+        
+        // Test that non-emoji shortcodes are preserved
+        $text = LitEmoji::replaceEmoji('Hello :world: and 😊', 'X');
+        $this->assertEquals('Hello :world: and X', $text);
+        
+        // Test with empty replacement (should work same as removeEmoji)
+        $text = LitEmoji::replaceEmoji('Text with 🔥 emoji', '');
+        $this->assertEquals('Text with  emoji', $text);
+    }
+
+    public function testReplaceEmojiPreservesNonEmojiShortcodes()
+    {
+        // Test that custom shortcodes that aren't emoji are preserved
+        $text = LitEmoji::replaceEmoji('Hello :custom_tag: and :fire: and :another_tag:', '[REPLACED]');
+        $this->assertEquals('Hello :custom_tag: and [REPLACED] and :another_tag:', $text);
+    }
+
+    public function testRemoveEmojiUsesReplaceEmoji()
+    {
+        // Test that removeEmoji now uses replaceEmoji internally
+        $text1 = LitEmoji::removeEmoji('Some text 😊 including emoji 🚀');
+        $text2 = LitEmoji::replaceEmoji('Some text 😊 including emoji 🚀', '');
+        $this->assertEquals($text1, $text2);
+    }
 }

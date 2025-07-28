@@ -205,6 +205,31 @@ class LitEmoji
     }
 
     /**
+     * Replaces all emoji-sequences in string with the specified replacement.
+     *
+     * @param string $source
+     * @param string $replacement
+     * @return string
+     */
+    public static function replaceEmoji(string $source, string $replacement): string
+    {
+        $content = self::encodeShortcode($source);
+        $supportedShortcodes = array_keys(self::getShortcodes());
+        
+        return preg_replace_callback('/:([\w_-]+):/', function($matches) use ($replacement, $supportedShortcodes) {
+            $shortcode = $matches[1];
+            
+            // Only replace if this is a known emoji shortcode
+            if (in_array($shortcode, $supportedShortcodes)) {
+                return $replacement;
+            }
+            
+            // Return the original shortcode if it's not a known emoji
+            return $matches[0];
+        }, $content);
+    }
+
+    /**
      * Removes all emoji-sequences from string.
      *
      * @param string $source
@@ -212,8 +237,7 @@ class LitEmoji
      */
     public static function removeEmoji(string $source): string
     {
-        $content = self::encodeShortcode($source);
-        return preg_replace('/:\w+:/', '', $content);
+        return self::replaceEmoji($source, '');
     }
 
     private static function getShortcodes(): array
