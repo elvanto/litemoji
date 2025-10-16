@@ -325,7 +325,7 @@ class LitEmoji
         // Handle specific complex emoji combinations FIRST (before general skin tone processing)
         // construction_worker + skin-tone + gender = woman_construction_worker_toneX
         $content = preg_replace(
-            '/(:construction_worker)::skin-tone-([2-6]):‍:female:️/',
+            '/(:construction_worker)::skin-tone-([2-6]):' . self::FEMALE_UNICODE . '/',
             ':woman_construction_worker_tone$2',
             $content
         );
