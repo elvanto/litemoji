@@ -331,11 +331,15 @@ class LitEmoji
         );
 
         // Handle general skin tone combinations - match :emoji::skin-tone-X: patterns
-        $content = preg_replace('/(:[\w_]+:):skin-tone-2:/', '$1_tone1', $content);
-        $content = preg_replace('/(:[\w_]+:):skin-tone-3:/', '$1_tone2', $content);
-        $content = preg_replace('/(:[\w_]+:):skin-tone-4:/', '$1_tone3', $content);
-        $content = preg_replace('/(:[\w_]+:):skin-tone-5:/', '$1_tone4', $content);
-        $content = preg_replace('/(:[\w_]+:):skin-tone-6:/', '$1_tone5', $content);
+        $content = preg_replace_callback(
+            '/(:[\w_]+:):skin-tone-([2-6]):/',
+            function ($matches) {
+                $base = $matches[1];
+                $tone = (int)$matches[2] - 1; // Map 2-6 to 1-5
+                return $base . '_tone' . $tone;
+            },
+            $content
+        );
         
         // Map skin tone numbers for captured groups in complex patterns (e.g. construction_worker_tone6 -> construction_worker_tone5)
         $content = preg_replace_callback(
