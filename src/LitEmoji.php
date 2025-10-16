@@ -338,15 +338,22 @@ class LitEmoji
         $content = preg_replace('/(:[\w_]+:):skin-tone-6:/', '$1_tone5', $content);
         
         // Map skin tone numbers for captured groups in complex patterns (e.g. construction_worker_tone6 -> construction_worker_tone5)
-        $content = str_replace([
-            'woman_construction_worker_tone2', 'woman_construction_worker_tone3', 'woman_construction_worker_tone4', 'woman_construction_worker_tone5', 'woman_construction_worker_tone6'
-        ], [
-            'woman_construction_worker_tone1', 'woman_construction_worker_tone2', 'woman_construction_worker_tone3', 'woman_construction_worker_tone4', 'woman_construction_worker_tone5'
-        ], $content);
+        $content = preg_replace_callback(
+            '/(woman_construction_worker_tone)([2-6])/',
+            function ($matches) {
+                $base = $matches[1];
+                $tone = (int)$matches[2] - 1; // Map tone 2-6 to tone 1-5
+                return $base . $tone;
+            },
+            $content
+        );
         
         // Clean up any remaining gender markers and variation selectors that didn't combine
-        $content = str_replace(['‍:female:️', '‍:male:️', '‍', '️'], '', $content);
-
+        $content = preg_replace(
+            '/(?<!:):?‍(?:female|male):️|(?<!:):?‍|️(?!:)/u',
+            '',
+            $content
+        );
         return $content;
     }
 }
