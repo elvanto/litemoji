@@ -103,4 +103,14 @@ class LitEmojiTest extends TestCase
         $text = LitEmoji::encodeShortcode('🚂—🚃');
         $this->assertEquals(':steam_locomotive:—:railway_car:', $text);
     }
+
+    public function testIssue22()
+    {
+        // Test skin tone and gender modifier combinations
+        $text1 = LitEmoji::encodeShortcode('👼🏿');
+        $this->assertEquals(':angel:_tone5', $text1);
+        
+        $text2 = LitEmoji::encodeShortcode('👷🏿‍♀️');
+        $this->assertEquals(':woman_construction_worker_tone5', $text2);
+    }
 }

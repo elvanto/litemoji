@@ -152,6 +152,9 @@ class LitEmoji
         }
 
         $replaced = str_replace(array_values($codepoints), array_keys($codepoints), $content);
+        
+        // Post-process to combine skin tone and gender modifiers
+        $replaced = self::combineSkinToneModifiers($replaced);
 
         if ($encoding !== false && $encoding !== 'UTF-8' && $encoding !== 'ASCII') {
             $replaced = mb_convert_encoding($replaced, $encoding, 'UTF-8');
@@ -308,5 +311,54 @@ class LitEmoji
         self::$shortcodeCodepoints = [];
         self::$shortcodeEntities = [];
         self::$entityCodepoints = [];
+    }
+
+
+    /**
+     * Combine skin tone and gender modifiers with base emoji shortcodes.
+     *
+     * @param string $content
+     * @return string
+     */
+    private static function combineSkinToneModifiers(string $content): string
+    {
+        // Handle emoji with skin tone and gender modifiers
+        // Pattern: :base::skin-tone-X:‍:gender:️? -> :gender_base_toneY
+        // This applies to any emoji that has both skin tone and gender (e.g., construction_worker, angel, etc.)
+        $content = preg_replace_callback(
+            '/(:[\w_]+:):skin-tone-([2-6]):‍:(?:female|male):️?/',
+            function ($matches) {
+                $base = $matches[1];
+                $tone = (int)$matches[2] - 1; // Map skin tone 2-6 to 1-5
+
+                // Extract the gender
+                $gender = preg_match('/‍:female:/', $matches[0]) ? 'woman_' : 'man_';
+
+                // Get the base name without colons
+                $baseName = trim($base, ':');
+
+                return ':' . $gender . $baseName . '_tone' . $tone;
+            },
+            $content
+        );
+
+        // Handle general skin tone combinations (without gender) - match :emoji::skin-tone-X: patterns
+        $content = preg_replace_callback(
+            '/(:[\w_]+:):skin-tone-([2-6]):/',
+            function ($matches) {
+                $base = $matches[1];
+                $tone = (int)$matches[2] - 1; // Map 2-6 to 1-5
+                return $base . '_tone' . $tone;
+            },
+            $content
+        );
+
+        // Clean up any remaining gender markers and variation selectors that didn't combine
+        $content = preg_replace(
+            '/‍(?::female:|:male:)|️/',
+            '',
+            $content
+        );
+        return $content;
     }
 }
