@@ -324,9 +324,13 @@ class LitEmoji
     {
         // Handle specific complex emoji combinations FIRST (before general skin tone processing)
         // construction_worker + skin-tone + gender = woman_construction_worker_toneX
-        $content = preg_replace(
-            '/(:construction_worker)::skin-tone-([2-6])::female:/',
-            ':woman_construction_worker_tone$2',
+        // Pattern: :construction_worker::skin-tone-X:‍:female:️ -> :woman_construction_worker_toneY
+        $content = preg_replace_callback(
+            '/(:construction_worker:):skin-tone-([2-6]):‍:female:️?/',
+            function ($matches) {
+                $tone = (int)$matches[2] - 1; // Map 2-6 to 1-5
+                return ':woman_construction_worker_tone' . $tone;
+            },
             $content
         );
 
@@ -340,21 +344,10 @@ class LitEmoji
             },
             $content
         );
-        
-        // Map skin tone numbers for captured groups in complex patterns (e.g. construction_worker_tone6 -> construction_worker_tone5)
-        $content = preg_replace_callback(
-            '/(woman_construction_worker_tone)([2-6])/',
-            function ($matches) {
-                $base = $matches[1];
-                $tone = (int)$matches[2] - 1; // Map tone 2-6 to tone 1-5
-                return $base . $tone;
-            },
-            $content
-        );
-        
+
         // Clean up any remaining gender markers and variation selectors that didn't combine
         $content = preg_replace(
-            '/(?<!:):?‍(?:female|male):️|(?<!:):?‍|️(?!:)/u',
+            '/(?<!:)‍(?::female:|:male:)|️/',
             '',
             $content
         );
