@@ -322,19 +322,27 @@ class LitEmoji
      */
     private static function combineSkinToneModifiers(string $content): string
     {
-        // Handle specific complex emoji combinations FIRST (before general skin tone processing)
-        // construction_worker + skin-tone + gender = woman_construction_worker_toneX
-        // Pattern: :construction_worker::skin-tone-X:‍:female:️ -> :woman_construction_worker_toneY
+        // Handle emoji with skin tone and gender modifiers
+        // Pattern: :base::skin-tone-X:‍:gender:️? -> :gender_base_toneY
+        // This applies to any emoji that has both skin tone and gender (e.g., construction_worker, angel, etc.)
         $content = preg_replace_callback(
-            '/(:construction_worker:):skin-tone-([2-6]):‍:female:️?/',
+            '/(:[\w_]+:):skin-tone-([2-6]):‍:(?:female|male):️?/',
             function ($matches) {
-                $tone = (int)$matches[2] - 1; // Map 2-6 to 1-5
-                return ':woman_construction_worker_tone' . $tone;
+                $base = $matches[1];
+                $tone = (int)$matches[2] - 1; // Map skin tone 2-6 to 1-5
+
+                // Extract the gender
+                $gender = preg_match('/‍:female:/', $matches[0]) ? 'woman_' : 'man_';
+
+                // Get the base name without colons
+                $baseName = trim($base, ':');
+
+                return ':' . $gender . $baseName . '_tone' . $tone;
             },
             $content
         );
 
-        // Handle general skin tone combinations - match :emoji::skin-tone-X: patterns
+        // Handle general skin tone combinations (without gender) - match :emoji::skin-tone-X: patterns
         $content = preg_replace_callback(
             '/(:[\w_]+:):skin-tone-([2-6]):/',
             function ($matches) {
@@ -347,7 +355,7 @@ class LitEmoji
 
         // Clean up any remaining gender markers and variation selectors that didn't combine
         $content = preg_replace(
-            '/(?<!:)‍(?::female:|:male:)|️/',
+            '/‍(?::female:|:male:)|️/',
             '',
             $content
         );
