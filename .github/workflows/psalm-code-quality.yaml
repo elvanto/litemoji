@@ -1,0 +1,35 @@
+name: Psalm Code Quality
+
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: ["master"]
+
+permissions:
+  contents: read
+
+jobs:
+  psalm:
+    name: Psalm Code Quality
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Run Psalm Code Quality Analysis
+        uses: docker://ghcr.io/psalm/psalm-github-actions
+        continue-on-error: true
+        with:
+          report_file: results.sarif
+
+      - name: Upload Code Quality results to GitHub
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: results.sarif
+          category: "Psalm Code Quality"
