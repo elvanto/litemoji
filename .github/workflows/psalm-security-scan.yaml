@@ -28,6 +28,12 @@ jobs:
         with:
           security_analysis: true
           report_file: results.sarif
+      
+      - name: Fix SARIF line and column numbers
+        if: always()
+        run: |
+          jq '.runs[].results[].locations[].physicalLocation.region |= (if .startLine == 0 then .startLine = 1 else . end | if .endLine == 0 then .endLine = 1 else . end | if .startColumn == 0 then .startColumn = 1 else . end | if .endColumn == 0 then .endColumn = 1 else . end)' results.sarif > results-fixed.sarif
+          mv results-fixed.sarif results.sarif
 
       - name: Upload Security Analysis results to GitHub
         uses: github/codeql-action/upload-sarif@v4
